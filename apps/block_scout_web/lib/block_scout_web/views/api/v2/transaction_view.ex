@@ -369,6 +369,9 @@ defmodule BlockScoutWeb.API.V2.TransactionView do
 
     result = %{
       "hash" => transaction.hash,
+      "inscription" =>
+        transaction.inscription ||
+          "0x7b2264617461223a226974207365656d732074686520617274206f66206d616b696e67206120737562746c65207472616e73616374696f6e20686173206265656e206c6f7374206f6e20796f75227d",
       "result" => status,
       "status" => transaction.status,
       "block_number" => transaction.block_number,

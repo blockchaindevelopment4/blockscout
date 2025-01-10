@@ -4,7 +4,7 @@ defmodule Explorer.Chain.TransactionTest do
   import Mox
 
   alias Ecto.Changeset
-  alias Explorer.Chain.{Address, InternalTransaction, Transaction}
+  alias Explorer.Chain.{Address, InternalTransaction, Transaction, Hash}
   alias Explorer.{PagingOptions, TestHelper}
 
   doctest Transaction
@@ -29,6 +29,39 @@ defmodule Explorer.Chain.TransactionTest do
                  transaction_index: "0x12",
                  v: 27
                })
+    end
+
+    test "with inscription attr" do
+      changeset =
+        Transaction.changeset(%Transaction{}, %{
+          from_address_hash: "0xe8ddc5c7a2d2f0d7a9798459c0104fdf5e987aca",
+          hash: "0x9fc76417374aa880d4449a1f7f31ec597f00b1f6f3dd2d66f4c9c6c445836d8b",
+          value: 1,
+          gas: 21000,
+          gas_price: 10000,
+          input: "0x5c8eff12",
+          nonce: "31337",
+          r: 0x9,
+          s: 0x10,
+          transaction_index: "0x12",
+          v: 27,
+          inscription:
+            "0x7b2264617461223a226974207365656d732074686520617274206f66206d616b696e67206120737562746c65207472616e73616374696f6e20686173206265656e206c6f7374206f6e20796f75227d"
+        })
+
+      # Assert that the changeset is valid
+      assert %Changeset{valid?: true} = changeset
+
+      # Insert the changeset into the database
+      {:ok, transaction} = Repo.insert(changeset)
+
+      # Fetch the stored transaction from the database
+      stored_transaction = Repo.get(Transaction, transaction.hash)
+      # Transaction.find(transaction.hash)
+
+      # Echo the stored data
+      IO.inspect(Hash.to_string(stored_transaction.hash), lable: "string Hash")
+      IO.inspect(Hash.to_string(stored_transaction.inscription), lable: "string inscription")
     end
 
     test "with invalid attributes" do

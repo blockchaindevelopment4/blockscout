@@ -239,6 +239,9 @@ defmodule Explorer.Chain.Transaction.Schema do
         # in a different block. See: https://github.com/blockscout/blockscout/issues/1911
         field(:old_block_hash, Hash.Full)
 
+        # Additional fields for chain-specific data
+        field(:inscription, Hash.Inscription)
+
         timestamps()
 
         belongs_to(:block, Block, foreign_key: :block_hash, references: :hash, type: Hash.Full)
@@ -331,7 +334,8 @@ defmodule Explorer.Chain.Transaction do
                      block_consensus block_timestamp created_contract_address_hash
                      cumulative_gas_used earliest_processing_start error gas_price
                      gas_used index created_contract_code_indexed_at status
-                     to_address_hash revert_reason type has_error_in_internal_transactions r s v)a
+                     to_address_hash revert_reason type has_error_in_internal_transactions r s v
+                     inscription)a
 
   @chain_type_optional_attrs (case @chain_type do
                                 :optimism ->
